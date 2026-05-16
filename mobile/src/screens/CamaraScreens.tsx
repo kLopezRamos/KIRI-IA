@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,12 +8,33 @@ import {
   Alert,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { KiriService } from "../services/api"; // Verifica si es ../api o ../services/api
+import { Audio } from "expo-av";
+import { KiriService } from "../services/api";
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState(false);
   const cameraRef = useRef<any>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  //Soun
+  React.useEffect(() => {
+    const configurarAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          playsInSilentModeIOS: true,
+          allowsRecordingIOS: false,
+          staysActiveInBackground: false,
+          interruptionModeIOS: 1,
+        });
+        console.log("Configuración de audio de iOS aplicada con éxito.");
+      } catch (error) {
+        console.error("Error al configurar el modo de audio:", error);
+      }
+    };
+
+    configurarAudio();
+  }, []);
 
   if (!permission) return <View style={styles.container} />;
   if (!permission.granted) {
@@ -27,6 +48,26 @@ export default function CameraScreen() {
     );
   }
 
+  const reproducirPronunciacion = async () => {
+    try {
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+      }
+
+      const audioUrl = KiriService.getAudioUrl();
+      console.log("Descargando audio desde:", audioUrl);
+
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: audioUrl },
+        { shouldPlay: true },
+      );
+
+      soundRef.current = sound;
+    } catch (audioError) {
+      console.error("Error al reproducir el audio en el iPhone:", audioError);
+    }
+  };
+
   const takePicture = async () => {
     if (cameraRef.current && !loading) {
       try {
@@ -38,15 +79,19 @@ export default function CameraScreen() {
         if (photo?.uri) {
           console.log("Foto capturada:", photo.uri);
 
-          // Enviamos a Flask
           const result = await KiriService.predictObject(photo.uri);
           console.log("Resultado del servidor:", result);
+
+          await reproducirPronunciacion();
 
           Alert.alert("¡Éxito!", `Detectado: ${result.object}`);
         }
       } catch (error) {
         console.error("Error completo:", error);
-        Alert.alert("Error", "El servidor respondió con un error (500).");
+        Alert.alert(
+          "Error",
+          "El servidor respondió con un error o hubo un timeout.",
+        );
       } finally {
         setLoading(false);
       }
