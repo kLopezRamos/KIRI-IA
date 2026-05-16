@@ -1,0 +1,11 @@
+
+backend/.env
+backend/venv/
+backend/__pycache__/
+backend/pronunciation.mp3
+backend/test_kiri.py
+
+
+mobile/node_modules/
+mobile/.expo/
+mobile/.env
