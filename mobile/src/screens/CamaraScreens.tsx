@@ -17,7 +17,7 @@ export default function CameraScreen() {
   const cameraRef = useRef<any>(null);
   const soundRef = useRef<Audio.Sound | null>(null);
 
-  //Soun
+  //Sound enabled
   React.useEffect(() => {
     const configurarAudio = async () => {
       try {
