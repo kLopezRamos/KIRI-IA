@@ -27,26 +27,26 @@ def predict():
         file = request.files['file']
         print(f"DEBUG: Procesando archivo: {file.filename}")
 
-        # image_data = file.read()
+        image_data = file.read()
         
-        # model = genai.GenerativeModel('models/gemini-flash-latest')
+        model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # prompt = "Identifica el objeto principal. Responde solo con el nombre en inglés."
-        # response = model.generate_content([
-        #     prompt,
-        #     {'mime_type': 'image/jpeg', 'data': image_data}
-        # ])
+        prompt = "Identifica el objeto principal. Responde solo con el nombre en inglés."
+        response = model.generate_content([
+            prompt,
+            {'mime_type': 'image/jpeg', 'data': image_data}
+        ])
 
-        # object_name = response.text.strip()
-
-
-        #MOCKING DATA FOR AUDIO FILE
-        object_name = 'Apple'
-        print(f"DEBUG (MOCK): Objeto dimulado: {object_name}")
-        #END OF MOCKING DATA FOR AUDIO FILE 
+        object_name = response.text.strip()
 
 
-        #print(f"DEBUG: Objeto detectado: {object_name}")
+        # MOCKING DATA FOR AUDIO FILE
+        # object_name = 'Apple'
+        # print(f"DEBUG (MOCK): Objeto dimulado: {object_name}")
+        # END OF MOCKING DATA FOR AUDIO FILE 
+
+
+        print(f"DEBUG: Objeto detectado: {object_name}")
         
         audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
         

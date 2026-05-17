@@ -8,72 +8,44 @@ import {
   Alert,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Audio } from "expo-av";
 import { KiriService } from "../services/api";
+import { useKiriAudio } from "../hooks/useKiriAudio";
+
+const PHOTO_QUALITY = 0.8;
+const TEXTS = {
+  permissionDenied: "Kiri AI necesita acceso a tu cámara.",
+  grantPermission: "Conceder Permiso",
+  errorTitle: "Error",
+  errorMessage: "El servidor respondió con un error o hubo un timeout.",
+  successTitle: "¡Éxito!",
+};
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState(false);
   const cameraRef = useRef<any>(null);
-  const soundRef = useRef<Audio.Sound | null>(null);
 
-  //Sound enabled
-  React.useEffect(() => {
-    const configurarAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          allowsRecordingIOS: false,
-          staysActiveInBackground: false,
-          interruptionModeIOS: 1,
-        });
-        console.log("Configuración de audio de iOS aplicada con éxito.");
-      } catch (error) {
-        console.error("Error al configurar el modo de audio:", error);
-      }
-    };
-
-    configurarAudio();
-  }, []);
+  const { reproducirPronunciacion } = useKiriAudio();
 
   if (!permission) return <View style={styles.container} />;
+
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Kiri AI necesita acceso a tu cámara.</Text>
+        <Text style={styles.text}>{TEXTS.permissionDenied}</Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
-          <Text style={styles.buttonText}>Conceder Permiso</Text>
+          <Text style={styles.buttonText}>{TEXTS.grantPermission}</Text>
         </TouchableOpacity>
       </View>
     );
   }
-
-  const reproducirPronunciacion = async () => {
-    try {
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync();
-      }
-
-      const audioUrl = KiriService.getAudioUrl();
-      console.log("Descargando audio desde:", audioUrl);
-
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: audioUrl },
-        { shouldPlay: true },
-      );
-
-      soundRef.current = sound;
-    } catch (audioError) {
-      console.error("Error al reproducir el audio en el iPhone:", audioError);
-    }
-  };
 
   const takePicture = async () => {
     if (cameraRef.current && !loading) {
       try {
         setLoading(true);
         const photo = await cameraRef.current.takePictureAsync({
-          quality: 0.8,
+          quality: PHOTO_QUALITY,
         });
 
         if (photo?.uri) {
@@ -84,14 +56,11 @@ export default function CameraScreen() {
 
           await reproducirPronunciacion();
 
-          Alert.alert("¡Éxito!", `Detectado: ${result.object}`);
+          Alert.alert(TEXTS.successTitle, `Detectado: ${result.object}`);
         }
       } catch (error) {
         console.error("Error completo:", error);
-        Alert.alert(
-          "Error",
-          "El servidor respondió con un error o hubo un timeout.",
-        );
+        Alert.alert(TEXTS.errorTitle, TEXTS.errorMessage);
       } finally {
         setLoading(false);
       }
