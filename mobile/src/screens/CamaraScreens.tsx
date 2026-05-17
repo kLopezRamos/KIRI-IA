@@ -1,31 +1,25 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { KiriService } from "../services/api";
-import { useKiriAudio } from "../hooks/useKiriAudio";
+import { useCameraActions } from "../hooks/useCameraActions"; // Importamos tu nuevo hook operativo
 
-const PHOTO_QUALITY = 0.8;
 const TEXTS = {
   permissionDenied: "Kiri AI necesita acceso a tu cámara.",
   grantPermission: "Conceder Permiso",
-  errorTitle: "Error",
-  errorMessage: "El servidor respondió con un error o hubo un timeout.",
-  successTitle: "¡Éxito!",
 };
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
-  const [loading, setLoading] = useState(false);
   const cameraRef = useRef<any>(null);
 
-  const { reproducirPronunciacion } = useKiriAudio();
+  // Extraemos las operaciones empaquetadas de nuestro hook
+  const { loading, takePicture } = useCameraActions(cameraRef);
 
   if (!permission) return <View style={styles.container} />;
 
@@ -39,33 +33,6 @@ export default function CameraScreen() {
       </View>
     );
   }
-
-  const takePicture = async () => {
-    if (cameraRef.current && !loading) {
-      try {
-        setLoading(true);
-        const photo = await cameraRef.current.takePictureAsync({
-          quality: PHOTO_QUALITY,
-        });
-
-        if (photo?.uri) {
-          console.log("Foto capturada:", photo.uri);
-
-          const result = await KiriService.predictObject(photo.uri);
-          console.log("Resultado del servidor:", result);
-
-          await reproducirPronunciacion();
-
-          Alert.alert(TEXTS.successTitle, `Detectado: ${result.object}`);
-        }
-      } catch (error) {
-        console.error("Error completo:", error);
-        Alert.alert(TEXTS.errorTitle, TEXTS.errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
 
   return (
     <View style={styles.container}>
