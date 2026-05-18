@@ -5,6 +5,7 @@ import google.generativeai as genai
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from gtts import gTTS
+import threading
 
 load_dotenv()  
 
@@ -70,30 +71,40 @@ def predict():
 # def get_audio():
 #     audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
 #     return send_file(audio_path, mimetype="audio/mpeg")
-@app.route('/get-audio', methods=['GET']) # Asegúrate de que tenga el methods=['GET']
+
+
+@app.route('/get-audio', methods=['GET']) 
 def get_audio():
-    # 1. Imprimir en la terminal de Python TODAS las querys que entran para ver si el iPhone las manda bien
     print("-> Query recibida en el servidor:", request.args)
     
-    # Intentamos capturar el parámetro 'text'
+
     word = request.args.get('text')
     print(f"-> Palabra extraída: '{word}'")
 
-    # Verificamos de forma estricta si la palabra existe, no está vacía y no es un string 'undefined'
     if word and word.strip() and word != "undefined":
-        print(f"📢 [HISTORIAL] Generando audio exclusivo para la palabra: '{word}'")
+        print(f" [HISTORIAL] Generando audio exclusivo para la palabra: '{word}'")
         
-        # Generamos un nombre de archivo único para esa palabra
         audio_path = os.path.join(os.path.dirname(__file__), f"pronunciation_{word}.mp3")
         
-        # gTTS crea el nuevo sonido desde cero
         tts = gTTS(text=word, lang='en', slow=False)
         tts.save(audio_path)
+
+        def borrar_archivo_despues():
+            import time
+            time.sleep(2) 
+            try:
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+                    print(f" [LIMPIEZA] Archivo temporal eliminado con éxito: {audio_path}")
+            except Exception as e:
+                print(f" No se pudo borrar el archivo temporal: {e}")
+
+        threading.Thread(target=borrar_archivo_despues).start()
         
         return send_file(audio_path, mimetype="audio/mpeg")
     
     else:
-        print("📷 [CÁMARA] No se detectó parámetro 'text'. Enviando el archivo estático de la última captura.")
+        print(" [CÁMARA] No se detectó parámetro 'text'. Enviando el archivo estático de la última captura.")
         audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
         return send_file(audio_path, mimetype="audio/mpeg")
 
