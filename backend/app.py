@@ -66,10 +66,38 @@ def predict():
         traceback.print_exc()  
         return jsonify({"error": str(e)}), 500
 
-@app.route('/get-audio')
+# @app.route('/get-audio')
+# def get_audio():
+#     audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
+#     return send_file(audio_path, mimetype="audio/mpeg")
+@app.route('/get-audio', methods=['GET']) # Asegúrate de que tenga el methods=['GET']
 def get_audio():
-    audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
-    return send_file(audio_path, mimetype="audio/mpeg")
+    # 1. Imprimir en la terminal de Python TODAS las querys que entran para ver si el iPhone las manda bien
+    print("-> Query recibida en el servidor:", request.args)
+    
+    # Intentamos capturar el parámetro 'text'
+    word = request.args.get('text')
+    print(f"-> Palabra extraída: '{word}'")
+
+    # Verificamos de forma estricta si la palabra existe, no está vacía y no es un string 'undefined'
+    if word and word.strip() and word != "undefined":
+        print(f"📢 [HISTORIAL] Generando audio exclusivo para la palabra: '{word}'")
+        
+        # Generamos un nombre de archivo único para esa palabra
+        audio_path = os.path.join(os.path.dirname(__file__), f"pronunciation_{word}.mp3")
+        
+        # gTTS crea el nuevo sonido desde cero
+        tts = gTTS(text=word, lang='en', slow=False)
+        tts.save(audio_path)
+        
+        return send_file(audio_path, mimetype="audio/mpeg")
+    
+    else:
+        print("📷 [CÁMARA] No se detectó parámetro 'text'. Enviando el archivo estático de la última captura.")
+        audio_path = os.path.join(os.path.dirname(__file__), "pronunciation.mp3")
+        return send_file(audio_path, mimetype="audio/mpeg")
+
+
 
 if __name__ == '__main__':
     port = int(os.getenv("Flask_PORT", 5000))

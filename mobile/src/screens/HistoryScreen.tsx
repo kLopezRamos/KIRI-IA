@@ -9,14 +9,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useKiriHistory } from "../hooks/useKiriHistory";
+import { useKiriAudio } from "../hooks/useKiriAudio"; // 1. Importamos tu hook de audio modificado
 import { HistoryItem } from "../services/database";
 
 export default function HistoryScreen() {
   // Consumimos los datos de SQLite a través de nuestro hook
   const { historyItems, loading, recargarHistorial } = useKiriHistory();
+  const { reproducirPronunciacion } = useKiriAudio(); // 2. Consumimos la función de audio
 
   // Diseño individual para cada tarjeta del historial
   const renderItem = ({ item }: { item: HistoryItem }) => (
+    // 3. Cambiamos View por TouchableOpacity para que responda al toque
     <View style={styles.card}>
       <Image source={{ uri: item.imageUri }} style={styles.image} />
       <View style={styles.infoContainer}>
@@ -25,6 +28,13 @@ export default function HistoryScreen() {
           {new Date(item.timestamp).toLocaleDateString()}
         </Text>
       </View>
+      <TouchableOpacity
+        onPress={() => reproducirPronunciacion(item.objectName)} // <-- Pasa la palabra de ESTA tarjeta al presionar
+        activeOpacity={0.7}
+      >
+        {/* 4. Icono visual para denotar que la tarjeta reproduce sonido */}
+        <Text style={styles.audioIcon}>🔊</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -95,6 +105,7 @@ const styles = StyleSheet.create({
   infoContainer: { flex: 1, marginLeft: 15 },
   objectName: { fontSize: 18, fontWeight: "bold", color: "#fff" },
   date: { fontSize: 12, color: "#aaa", marginTop: 4 },
+  audioIcon: { fontSize: 18, marginRight: 10, opacity: 0.7 }, // Estilo para el icono de audio
   emptyText: {
     textAlign: "center",
     color: "#aaa",

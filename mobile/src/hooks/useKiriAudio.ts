@@ -31,15 +31,23 @@ export function useKiriAudio() {
     };
   }, []);
 
-  // Función dedicada a descargar y sonar el .mp3
-  const reproducirPronunciacion = async () => {
+  // 🛠️ MODIFICACIÓN: Ahora la función acepta opcionalmente la palabra a reproducir
+// Función dedicada a descargar y sonar el .mp3
+  const reproducirPronunciacion = async (textoParaReproducir?: string) => {
     try {
       if (soundRef.current) {
         await soundRef.current.unloadAsync();
       }
 
-      const audioUrl = KiriService.getAudioUrl();
-      console.log("Descargando audio desde:", audioUrl);
+      // Obtenemos la URL base original (que ya incluye el "?t=xxxx" de la cámara)
+      const baseUrl = KiriService.getAudioUrl();
+      
+      // 🛠️ CORRECCIÓN AQUÍ: Separamos usando "&" en lugar de "?" porque la URL ya trae un parámetro previo
+      const audioUrl = textoParaReproducir 
+        ? `${baseUrl}&text=${encodeURIComponent(textoParaReproducir)}`
+        : baseUrl;
+
+      console.log("Descargando audio dinámico corregido desde:", audioUrl);
 
       const { sound } = await Audio.Sound.createAsync(
         { uri: audioUrl },
@@ -48,7 +56,7 @@ export function useKiriAudio() {
 
       soundRef.current = sound;
     } catch (audioError) {
-      console.error("Error al reproducir el audio en el iPhone:", audioError);
+      console.error("Error al reproducir el audio:", audioError);
     }
   };
 
