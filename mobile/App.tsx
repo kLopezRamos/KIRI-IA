@@ -1,22 +1,70 @@
 import React, { useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, StatusBar, Text } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+// Importamos tus componentes modulares
 import CameraScreen from "./src/screens/CamaraScreens";
+import HistoryScreen from "./src/screens/HistoryScreen";
 import { DatabaseService } from "./src/services/database";
 
+// Inicializamos el creador de pestañas nativas
+const Tab = createBottomTabNavigator();
+
 export default function App() {
-  //Data base initialized
+  // Inicializamos la base de datos local al arrancar
   useEffect(() => {
-    const setup = async () => {
+    const setupDb = async () => {
       await DatabaseService.initDatabase();
     };
-    setup();
+    setupDb();
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <CameraScreen />
+      <StatusBar barStyle="light-content" backgroundColor="#1A1A1A" />
+
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false, // Oculta la barra superior fea por defecto
+            tabBarStyle: {
+              backgroundColor: "#2A2A2A", // Fondo oscuro alineado a tu paleta
+              borderTopColor: "#333",
+              paddingBottom: 5,
+              height: 60,
+            },
+            tabBarActiveTintColor: "#00ff00", // Verde neón cuando esté seleccionado
+            tabBarInactiveTintColor: "#aaa", // Gris claro cuando esté inactivo
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: "bold",
+            },
+          }}
+        >
+          {/* Pestaña 1: Cámara */}
+          <Tab.Screen
+            name="Cámara"
+            component={CameraScreen}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <Text style={{ color, fontSize: 20 }}>📷</Text>
+              ),
+            }}
+          />
+
+          {/* Pestaña 2: Historial */}
+          <Tab.Screen
+            name="Historial"
+            component={HistoryScreen}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <Text style={{ color, fontSize: 20 }}>📂</Text>
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
