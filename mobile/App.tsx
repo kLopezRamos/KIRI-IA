@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { SafeAreaView, StyleSheet, StatusBar, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import { Ionicons } from "@expo/vector-icons";
 // Importamos tus componentes modulares
 import CameraScreen from "./src/screens/CamaraScreens";
 import HistoryScreen from "./src/screens/HistoryScreen";
+import PracticeScreen from "./src/screens/PracticeScreen";
 import { DatabaseService } from "./src/services/database";
 
 // Inicializamos el creador de pestañas nativas
@@ -27,15 +28,15 @@ export default function App() {
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={{
-            headerShown: false, // Oculta la barra superior fea por defecto
+            headerShown: false,
             tabBarStyle: {
-              backgroundColor: "#2A2A2A", // Fondo oscuro alineado a tu paleta
+              backgroundColor: "#2A2A2A",
               borderTopColor: "#333",
               paddingBottom: 5,
               height: 60,
             },
-            tabBarActiveTintColor: "#00ff00", // Verde neón cuando esté seleccionado
-            tabBarInactiveTintColor: "#aaa", // Gris claro cuando esté inactivo
+            tabBarActiveTintColor: "#00ff00",
+            tabBarInactiveTintColor: "#aaa",
             tabBarLabelStyle: {
               fontSize: 12,
               fontWeight: "bold",
@@ -47,8 +48,8 @@ export default function App() {
             name="Cámara"
             component={CameraScreen}
             options={{
-              tabBarIcon: ({ color }) => (
-                <Text style={{ color, fontSize: 20 }}>📷</Text>
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="camera" size={size} color={color} />
               ),
             }}
           />
@@ -58,8 +59,19 @@ export default function App() {
             name="Historial"
             component={HistoryScreen}
             options={{
-              tabBarIcon: ({ color }) => (
-                <Text style={{ color, fontSize: 20 }}>📂</Text>
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="folder-open" size={size} color={color} />
+              ),
+            }}
+          />
+
+          {/* Pestaña 3: Práctica */}
+          <Tab.Screen
+            name="Práctica"
+            component={PracticeScreen}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="game-controller" size={size} color={color} />
               ),
             }}
           />
