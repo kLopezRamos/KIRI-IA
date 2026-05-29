@@ -45,7 +45,7 @@ export default function App() {
         >
           {/* Pestaña 1: Cámara */}
           <Tab.Screen
-            name="Cámara"
+            name="Camera"
             component={CameraScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
@@ -56,7 +56,7 @@ export default function App() {
 
           {/* Pestaña 2: Historial */}
           <Tab.Screen
-            name="Historial"
+            name="Objects"
             component={HistoryScreen}
             options={{
               tabBarIcon: ({ color, size }) => (
@@ -67,7 +67,7 @@ export default function App() {
 
           {/* Pestaña 3: Práctica */}
           <Tab.Screen
-            name="Práctica"
+            name="Game"
             component={PracticeScreen}
             options={{
               tabBarIcon: ({ color, size }) => (

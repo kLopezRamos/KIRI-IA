@@ -41,11 +41,7 @@ def predict():
         object_name = response.text.strip()
 
 
-        # MOCKING DATA FOR AUDIO FILE
-        # object_name = 'Apple'
-        # print(f"DEBUG (MOCK): Objeto dimulado: {object_name}")
-        # END OF MOCKING DATA FOR AUDIO FILE 
-
+     
 
         print(f"DEBUG: Objeto detectado: {object_name}")
         
