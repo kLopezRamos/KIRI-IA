@@ -28,7 +28,7 @@ class LocalIdentifier:
     def predict(self, image_file):
         try:
             image = Image.open(image_file).convert("RGB")
-            
+
             width, height = image.size
             new_edge = min(width, height)
             left = (width - new_edge) / 2
@@ -83,9 +83,7 @@ class LocalIdentifier:
                 return object_name
 
         except Exception as e:
-            print("========================================")
-            print("ERROR EN FLORENCE (MODO OD)")
+            print("ERROR EN MODO OD")
             print(str(e))
-            print("========================================")
 
         return "object"
