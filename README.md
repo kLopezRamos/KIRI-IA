@@ -5,20 +5,21 @@
 </p>
 
 <p align="center">
-  <img src="./assets/kiri-demo.gif" alt="Kiri AI Demo" width="300" />
+  <img src="./mobile/assets/kiriAI.gif" alt="Kiri AI Demo" width="300" />
 </p>
 
 ---
 
 
 
-**Kiri AI** is a mobile application designed to bridge the gap between computer vision and language learning. Unlike traditional AI applications that rely on heavy cloud infrastructure, Kiri AI performs **100% local inference**. By processing everything directly on the device, the application guarantees absolute user privacy, zero server latency, and offline functionality, making cutting-edge AI accessible anytime, anywhere.
+**Kiri AI** is an educational mobile application designed to help children strengthen their English vocabulary through interactive visual learning. The core of the application lies in its integration with Microsoft Florence-2, a pre-trained vision-language model. Instead of relying on costly and restrictive cloud AI APIs, Kiri AI connects to a dedicated local inference server. This architecture allows the app to process image analysis requests seamlessly, offering a scalable, cost-effective, and controlled environment for AI-driven education.
 
 ### Key Features
-*  **Local Object Detection:** Instantly identifies objects in real-time or from gallery images.
+*  **Local Object Detection:** Instantly identifies objects in real-time
 *  **Contextual Language Learning:** Generates vocabulary, translations, and contextual language exercises based on the detected objects.
-*  **Privacy-First Architecture:** No user data, images, or prompts ever leave the device.
-*  **High Performance & Low Latency:** Optimized local model execution for quick response times without API dependencies.
+*  **Self-Hosted Inference Architecture:** Offloads heavy AI computations from the mobile device to a dedicated local server, eliminating cloud API dependencies and platform fees.
+*  **Child-Centric Vocabulary Learning:** Tailored experience to help kids discover, learn, and reinforce English words through everyday objects.
+
 
 ---
 
@@ -32,7 +33,7 @@
 
 ##   Highlights
 
-* **Edge AI Integration:** Integrated the **Microsoft Florence-2** vision-language model to run directly on-device, bypassing external API bottlenecks and usage fees.
+* **Client-Server AI Pipeline:** Successfully decoupled the heavy machine learning workload by building a local server infrastructure. The React Native app handles the user experience, while the local Python backend executes the Florence-2 model weights.
 * **Structured Data Parsing:** Implemented custom post-processing to transform raw local model text outputs into clean, structured JSON data to dynamically render the UI and learning modules.
 
 ---
