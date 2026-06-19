@@ -3,13 +3,10 @@
 <p align="center">
   <strong>An intelligent mobile application for object detection and language learning through image analysis.</strong>
 </p>
-
 <p align="center">
-  <img src="./mobile/assets/cc1.jpeg" alt="Kiri pics" width="300" />
-  <img src="./mobile/assets/kiriAI.gif" alt="Kiri AI Demo" width="300" />
-  <img src="./mobile/assets/cc2.jpeg" alt="Kiri AI game" width="300" />
-
-
+  <img src="./mobile/assets/cc2.jpeg" width="230" height= "440">
+  <img src="./mobile/assets/kiriAI.gif" width="250" height= "440">
+  <img src="./mobile/assets/cc1.jpeg" width="230" height= "440">
 </p>
 
 ---
