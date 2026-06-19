@@ -5,7 +5,11 @@
 </p>
 
 <p align="center">
+  <img src="./mobile/assets/cc1.jpeg" alt="Kiri pics" width="300" />
   <img src="./mobile/assets/kiriAI.gif" alt="Kiri AI Demo" width="300" />
+  <img src="./mobile/assets/cc2.jpeg" alt="Kiri AI game" width="300" />
+
+
 </p>
 
 ---
